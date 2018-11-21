@@ -41,6 +41,7 @@ view : Model -> Html Msg
 view model =
     div [ class "container" ]
         [ viewForm model
+        , br [] []
         , viewMessage model
         , viewMainContent model
         ]
@@ -85,13 +86,15 @@ viewMainContent model =
 
 viewImages : List Image -> Html Msg
 viewImages images =
-    div [] (List.map viewImage images)
+    div [class "columns is-multiline"] (List.map viewImage images)
 
 
 viewImage : Image -> Html Msg
 viewImage image =
-    img [ src image.thumbnail
-        , onClick <| ImageSelected image ] []
+    div[ class "column is-one-quarter"]
+        [img [ src image.thumbnail
+            , onClick <| ImageSelected image ] []
+        ]
 
 viewSelectedImage : Image -> Html Msg
 viewSelectedImage image =
