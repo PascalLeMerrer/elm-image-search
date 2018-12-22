@@ -76,30 +76,36 @@ viewMessage model =
         div [ class "notification is-warning" ] [ text model.errorMessage ]
 
 
-viewMainContent: Model -> Html Msg
+viewMainContent : Model -> Html Msg
 viewMainContent model =
     case model.selectedImage of
         Nothing ->
             viewImages model.images
+
         Just image ->
             viewSelectedImage image
 
+
 viewImages : List Image -> Html Msg
 viewImages images =
-    div [class "columns is-multiline"] (List.map viewImage images)
+    div [ class "columns is-multiline" ] (List.map viewImage images)
 
 
 viewImage : Image -> Html Msg
 viewImage image =
-    div[ class "column is-one-quarter"]
-        [img [ src image.thumbnail
-            , onClick <| ImageSelected image ] []
+    div [ class "column is-one-quarter" ]
+        [ img
+            [ src image.thumbnail
+            , onClick <| ImageSelected image
+            ]
+            []
         ]
+
 
 viewSelectedImage : Image -> Html Msg
 viewSelectedImage image =
-    div [] 
-        [ p [ onClick Unselected, style "cursor" "pointer" ] [ text "<< Revenir aux résultats de la recherche"] 
+    div []
+        [ p [ onClick Unselected, style "cursor" "pointer" ] [ text "<< Revenir aux résultats de la recherche" ]
         , img [ src image.url ] []
         ]
 
@@ -127,7 +133,7 @@ update msg model =
                         , errorMessage = ""
                         , images = []
                     }
-            in 
+            in
             ( newModel, cmd )
 
         ImagesReceived response ->
@@ -154,10 +160,11 @@ update msg model =
                     ( { model | errorMessage = errorToString httpError }, Cmd.none )
 
         ImageSelected image ->
-            ({ model | selectedImage = Just image }, Cmd.none)
+            ( { model | selectedImage = Just image }, Cmd.none )
 
         Unselected ->
-            ({ model | selectedImage = Nothing }, Cmd.none)
+            ( { model | selectedImage = Nothing }, Cmd.none )
+
 
 errorToString httpError =
     case httpError of
