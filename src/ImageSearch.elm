@@ -95,7 +95,7 @@ viewImage : Image -> Html Msg
 viewImage image =
     div [ class "column is-one-quarter" ]
         [ img
-            [ src image.thumbnail
+            [ src image.thumbnailUrl
             , onClick <| ImageSelected image
             ]
             []
@@ -105,8 +105,21 @@ viewImage image =
 viewSelectedImage : Image -> Html Msg
 viewSelectedImage image =
     div []
-        [ p [ onClick Unselected, style "cursor" "pointer" ] [ text "<< Revenir aux résultats de la recherche" ]
+        [ div [ class "level" ]
+            [ span [ onClick Unselected, style "cursor" "pointer" ] [ text "<< Back to search results" ]
+            , span [] [ viewCredits image ]
+            ]
         , img [ src image.url ] []
+        ]
+
+
+viewCredits : Image -> Html Msg
+viewCredits image =
+    div [ class "is-pulled-right" ]
+        [ span [] [ text "Image by " ]
+        , a [ href <| "https://unsplash.com/@" ++ image.username ++ "?utm_source=elm%20tutorial&utm_medium=referral" ] [ text image.author ]
+        , span [] [ text " at " ]
+        , a [ href "https://unsplash.com/?utm_source=elm%20tutorial&utm_medium=referral" ] [ text "Unsplash" ]
         ]
 
 
@@ -121,7 +134,7 @@ update msg model =
                 cmd =
                     Http.get
                         { url =
-                            "https://contextualwebsearch.com/api/Search/ImageSearchAPI?q="
+                            "http://elm-unsplash-orionis-dev.kermit.itn.intraorange/search/photos?query="
                                 ++ model.searchTerms
                                 ++ "&count=50&autoCorrect=True"
                         , expect = Http.expectJson ImagesReceived imageListDecoder

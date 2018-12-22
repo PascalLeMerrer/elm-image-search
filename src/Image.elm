@@ -1,21 +1,30 @@
 module Image exposing (Image, imageListDecoder)
 
-import Json.Decode exposing (..)
+import Json.Decode as Decode exposing (Decoder, field, int, list, string)
+import Json.Decode.Pipeline exposing (requiredAt)
 
 
 type alias Image =
-    { url : String
-    , thumbnail : String
+    { thumbnailUrl : String
+    , url : String
+    , height : Int
+    , width : Int
+    , author : String
+    , username : String
     }
-
-
-imageListDecoder : Decoder (List Image)
-imageListDecoder =
-    field "value" <| list imageDecoder
 
 
 imageDecoder : Decoder Image
 imageDecoder =
-    map2 Image
-        (field "url" string)
-        (field "thumbnail" string)
+    Decode.succeed Image
+        |> requiredAt [ "urls", "thumb" ] string
+        |> requiredAt [ "urls", "regular" ] string
+        |> requiredAt [ "height" ] int
+        |> requiredAt [ "width" ] int
+        |> requiredAt [ "user", "name" ] string
+        |> requiredAt [ "user", "username" ] string
+
+
+imageListDecoder : Decoder (List Image)
+imageListDecoder =
+    field "results" (list imageDecoder)
